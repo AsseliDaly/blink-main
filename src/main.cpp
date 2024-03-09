@@ -8,7 +8,7 @@
 #include <addons/RTDBHelper.h>
 #define WIFI_SSID "Orange-206F"
 #define WIFI_PASSWORD "RM66H5AA151"
-#define API_KEY "hiKFiRYaKpcQ62CjhXfqmJSX9XoZKBoGk7AA3oUf"
+#define API_KEY "AIzaSyAaW42iYiAQODvLaOhwgkulYKOQMa9jNbQ"
 
 /* 2. Define the RTDB URL */
 #define DATABASE_URL "https://sbapp-6c7c9-default-rtdb.firebaseio.com"
@@ -18,6 +18,7 @@ FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
 String stringVal ="";
+
 
 unsigned long sendDataPrevMillis = 0;
 int intValue;
@@ -70,19 +71,21 @@ void loop() {
     
   
 
-   if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 5000 || sendDataPrevMillis == 0)) {
+   if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 1000 || sendDataPrevMillis == 0)) {
     sendDataPrevMillis = millis();
-    if (Firebase.RTDB.getString(&fbdo, "/state")) {
+    if (Firebase.RTDB.getString(&fbdo ,"/Lampe/state")) {
       
         stringVal = fbdo.stringData();
         Serial.println(stringVal);
-        if(stringVal=="on"){ digitalWrite(LED_BUILTIN ,HIGH);}
-        else if(stringVal=="off"){ digitalWrite(LED_BUILTIN ,LOW);}
+        if(stringVal=="on"){ digitalWrite(LED_BUILTIN ,HIGH);
+      Serial.println("high");}
+        else if(stringVal=="off"){ digitalWrite(LED_BUILTIN ,LOW);
+        Serial.println("low");}
         Serial.println(fbdo.stringData());
-           
+        
         
     }
-
+ 
 
 
 
