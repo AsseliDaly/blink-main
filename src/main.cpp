@@ -6,8 +6,8 @@
 
 // Provide the RTDB payload printing info and other helper functions.
 #include <addons/RTDBHelper.h>
-#define WIFI_SSID "Orange-206F"
-#define WIFI_PASSWORD "RM66H5AA151"
+#define WIFI_SSID "TOPNET_2A28"
+#define WIFI_PASSWORD "8vm6vft2hv"
 #define API_KEY "AIzaSyAaW42iYiAQODvLaOhwgkulYKOQMa9jNbQ"
 
 /* 2. Define the RTDB URL */
@@ -67,7 +67,7 @@ void setup() {
 
 void loop() {
   
-
+int gaz = analogRead(21);
     
   
 
@@ -85,7 +85,17 @@ void loop() {
         
         
     }
- 
+    if (Firebase.RTDB.setFloat(&fbdo,"home1/cuisine",gaz)){
+      Serial.println("PASSED");
+       Serial.print("gaz: ");
+       Serial.println(gaz);
+      
+    }
+    else {
+      Serial.println("FAILED");
+      Serial.println("REASON: " + fbdo.errorReason());
+    }
+    
 
 
 
