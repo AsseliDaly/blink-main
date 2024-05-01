@@ -6,6 +6,10 @@
 
 // Provide the RTDB payload printing info and other helper functions.
 #include <addons/RTDBHelper.h>
+
+#include "DHT.h"
+#include <Adafruit_Sensor.h>
+
 #define WIFI_SSID "TOPNET_2A28"
 #define WIFI_PASSWORD "8vm6vft2hv"
 #define API_KEY "AIzaSyAaW42iYiAQODvLaOhwgkulYKOQMa9jNbQ"
@@ -14,11 +18,14 @@
 #define DATABASE_URL "https://sbapp-6c7c9-default-rtdb.firebaseio.com"
 #define LED_BUILTIN 2
 
+#define DHTPIN 4
+#define DHTTYPE DHT11 
+
 FirebaseData fbdo;
 FirebaseAuth auth;
 FirebaseConfig config;
 String stringVal ="";
-
+DHT dht(DHTPIN, DHTTYPE);
 
 unsigned long sendDataPrevMillis = 0;
 int intValue;
@@ -28,6 +35,7 @@ bool signupOK = false;
 void setup() {
   // put your setup code here, to run once:
   pinMode(LED_BUILTIN, OUTPUT);
+  dht.begin();
   Serial.begin(115200);
     Serial.println();
 
@@ -68,7 +76,10 @@ void setup() {
 void loop() {
   
 int gaz = analogRead(21);
-    
+float h = dht.readHumidity();
+// Read temperature as Celsius (the default)
+float t = dht.readTemperature();
+
   
 
    if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 1000 || sendDataPrevMillis == 0)) {
@@ -85,12 +96,26 @@ int gaz = analogRead(21);
         
         
     }
-    if (Firebase.RTDB.setFloat(&fbdo,"home1/cuisine",gaz)){
+    if (Firebase.RTDB.setFloat(&fbdo,"home1/cuisine",t)){
+      Serial.println("PASSED");
+       Serial.print("temperature: ");
+       Serial.println(t);
+      
+    }
+    else if (Firebase.RTDB.setFloat(&fbdo,"home1/cuisine",h))
+    {
+      Serial.println("PASSED");
+       Serial.print("humidité: ");
+       Serial.println(h);
+    }
+    else if (Firebase.RTDB.setFloat(&fbdo,"home1/cuisine",gaz))
+    {
       Serial.println("PASSED");
        Serial.print("gaz: ");
        Serial.println(gaz);
-      
     }
+    
+    
     else {
       Serial.println("FAILED");
       Serial.println("REASON: " + fbdo.errorReason());
